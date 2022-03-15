@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 )
+
+const monitoramentos = 3
+const delay = 5
 
 func main() {
 
@@ -18,7 +22,7 @@ func main() {
 		switch comando {
 		case 1:
 			fmt.Println("Monitorando...")
-			monitorar()
+			iniciarMonitoramento()
 		case 2:
 			fmt.Println("Exibindo Logs...")
 		case 0:
@@ -28,6 +32,8 @@ func main() {
 			fmt.Println("Comando ", comando, "inexistente")
 			os.Exit(-1)
 		}
+
+		fmt.Println("")
 	}
 
 	// Outro modo de realizar a validacao do input do usuario
@@ -73,14 +79,27 @@ func lerComando() int {
 	return comandoLido
 }
 
-func monitorar() {
-	url := "https://random-status-code.herokuapp.com/"
-	resp, _ := http.Get(url)
+func iniciarMonitoramento() {
+	sites := []string{"https://random-status-code.herokuapp.com/", "https://www.google.com/",
+		"https://www.youtube.com/"}
+
+	for i := 0; i < monitoramentos; i++ {
+		for i, site := range sites {
+			fmt.Println("Site", i, ":", site)
+			testaSite(site)
+		}
+		time.Sleep(delay * time.Second)
+		fmt.Println("")
+	}
+}
+
+func testaSite(site string) {
+
+	resp, _ := http.Get(site)
 
 	if resp.StatusCode == 200 {
-		fmt.Println("Site", url, "foi carregado com sucesso !")
+		fmt.Println("Site", site, "foi carregado com sucesso !")
 	} else {
-		fmt.Println("Site", url, "está com problemas. Status Code:", resp.StatusCode)
+		fmt.Println("Site", site, "está com problemas. Status Code:", resp.StatusCode)
 	}
-
 }
