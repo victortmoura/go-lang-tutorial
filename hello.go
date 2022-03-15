@@ -8,24 +8,26 @@ import (
 
 func main() {
 
-	exibirIntroducao()
+	// for sem nada ira rodar indefinidamente
+	for {
+		exibirIntroducao()
+		exibirMenu()
 
-	exibirMenu()
+		comando := lerComando()
 
-	comando := lerComando()
-
-	switch comando {
-	case 1:
-		fmt.Println("Monitorando...")
-		fmt.Println(monitorar())
-	case 2:
-		fmt.Println("Exibindo Logs...")
-	case 0:
-		fmt.Println("Saindo do Programa...")
-		os.Exit(0)
-	default:
-		fmt.Println("Comando ", comando, "inexistente")
-		os.Exit(-1)
+		switch comando {
+		case 1:
+			fmt.Println("Monitorando...")
+			monitorar()
+		case 2:
+			fmt.Println("Exibindo Logs...")
+		case 0:
+			fmt.Println("Saindo do Programa...")
+			os.Exit(0)
+		default:
+			fmt.Println("Comando ", comando, "inexistente")
+			os.Exit(-1)
+		}
 	}
 
 	// Outro modo de realizar a validacao do input do usuario
@@ -71,9 +73,14 @@ func lerComando() int {
 	return comandoLido
 }
 
-func monitorar() string {
-	url := "https://www.alura.com.br"
+func monitorar() {
+	url := "https://random-status-code.herokuapp.com/"
 	resp, _ := http.Get(url)
 
-	return resp.Status
+	if resp.StatusCode == 200 {
+		fmt.Println("Site", url, "foi carregado com sucesso !")
+	} else {
+		fmt.Println("Site", url, "está com problemas. Status Code:", resp.StatusCode)
+	}
+
 }
